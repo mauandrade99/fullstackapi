@@ -1,8 +1,10 @@
 package br.com.teste.fullstackapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable; // Importante para validar o corpo da requisição
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity; // Importante para validar o corpo da requisição
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +53,18 @@ public class UserController {
         return userService.findUserById(id)
                 .map(user -> ResponseEntity.ok(UserMapper.toDTO(user))) // Se encontrar, converte para DTO e retorna 200 OK
                 .orElse(ResponseEntity.notFound().build()); // Se não encontrar, retorna 404 Not Found
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')") // Listar todos os usuários é uma ação de Admin
+    public ResponseEntity<Page<UserResponseDTO>> getAllUsers(Pageable pageable) {
+        // Busca a página de entidades User
+        Page<User> userPage = userService.findAllUsers(pageable);
+        
+        // Converte a página de User para uma página de UserResponseDTO
+        Page<UserResponseDTO> userDtoPage = userPage.map(UserMapper::toDTO);
+        
+        return ResponseEntity.ok(userDtoPage);
     }
 
 }
