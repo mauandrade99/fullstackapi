@@ -1,0 +1,9 @@
+
+cd\FullStack\fullstackapi
+git init
+git add .
+git commit -m "fullstackapi 1.01"
+git branch -M main
+git push -u origin main
+
+
