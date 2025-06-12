@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Registro de Usuário</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>

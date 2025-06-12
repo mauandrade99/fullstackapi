@@ -35,6 +35,13 @@ public class UserService {
         
         return userRepository.save(user);
     }
+
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("Usuário não encontrado com o id: " + id);
+        }
+        userRepository.deleteById(id);
+    }
     
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);

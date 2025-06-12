@@ -41,10 +41,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String userEmail;
 
         // --- LOG DE DEBUG 1 ---
-        System.out.println(">>> [JwtAuthFilter] Iniciando filtro para a requisição: " + request.getRequestURI());
+        // System.out.println(">>> [JwtAuthFilter] Iniciando filtro para a requisição: " + request.getRequestURI());
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println(">>> [JwtAuthFilter] Sem token Bearer. Passando para o próximo filtro.");
+            // System.out.println(">>> [JwtAuthFilter] Sem token Bearer. Passando para o próximo filtro.");
             filterChain.doFilter(request, response);
             return;
         }
@@ -57,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 // --- LOG DE DEBUG 2 ---
-                System.out.println(">>> [JwtAuthFilter] Token válido! Autenticando usuário: " + userDetails.getUsername() + " com permissões: " + userDetails.getAuthorities());
+                // System.out.println(">>> [JwtAuthFilter] Token válido! Autenticando usuário: " + userDetails.getUsername() + " com permissões: " + userDetails.getAuthorities());
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
@@ -68,7 +68,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
                 // --- LOG DE DEBUG 3 ---
-                System.out.println(">>> [JwtAuthFilter] Token inválido!");
+                // System.out.println(">>> [JwtAuthFilter] Token inválido!");
             }
         }
         filterChain.doFilter(request, response);

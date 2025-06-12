@@ -53,15 +53,31 @@ public class AddressService {
     }
 
     public Address updateAddress(Long addressId, Address addressDetails) {
+        // Busca o endereço existente no banco
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new RuntimeException("Endereço não encontrado com o id: " + addressId));
 
-        // Atualiza apenas os campos que podem ser modificados pelo usuário
+        // Verifica se o CEP foi alterado
+        String newCep = addressDetails.getCep().replaceAll("-", "");
+        if (!newCep.equals(address.getCep())) {
+            // Se o CEP mudou, consulta o ViaCEP novamente
+            ViaCepResponse viaCepResponse = viaCepClient.getEnderecoByCep(newCep);
+            if (viaCepResponse == null || viaCepResponse.isErro()) {
+                throw new RuntimeException("O novo CEP informado é inválido ou não foi encontrado!");
+            }
+            // Atualiza todos os dados do endereço com base na resposta do ViaCEP
+            address.setCep(newCep);
+            address.setLogradouro(viaCepResponse.getLogradouro());
+            address.setBairro(viaCepResponse.getBairro());
+            address.setCidade(viaCepResponse.getLocalidade());
+            address.setEstado(viaCepResponse.getUf());
+        }
+
+        // Sempre atualiza o número e o complemento, que são fornecidos pelo usuário
         address.setNumero(addressDetails.getNumero());
         address.setComplemento(addressDetails.getComplemento());
-        // CEP e outros dados do ViaCEP não são alterados aqui.
-        // Se a alteração de CEP fosse necessária, teríamos que chamar o ViaCEP novamente.
 
+        // Salva o endereço atualizado (com dados do ViaCEP se o CEP mudou)
         return addressRepository.save(address);
     }
 
