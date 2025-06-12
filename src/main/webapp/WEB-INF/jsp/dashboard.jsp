@@ -303,6 +303,56 @@
         }
     }
 
+    const saveBtn = document.getElementById('save-address-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            console.log("Botão 'Salvar' do modal clicado.");
+            const addressId = document.getElementById('address-id').value;
+            const cep = document.getElementById('cep').value;
+            const numero = document.getElementById('numero').value;
+            const complemento = document.getElementById('complemento').value;
+            const modalError = document.getElementById('modal-error');
+            
+            modalError.classList.add('d-none');
+            
+            let url = '/api/users/' + currentUserIdForAddress + '/addresses';
+            let method = 'POST';
+            let body = { cep: cep, numero: numero, complemento: complemento };
+
+            if (addressId) {
+                url += '/' + addressId;
+                method = 'PUT';
+                body = { cep: cep, numero: numero, complemento: complemento };
+            }
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify(body)
+            })
+            .then(function(res) {
+                if (!res.ok) {
+                    return res.json().then(function(err) { 
+                        throw new Error(err.details ? err.details.join(', ') : 'Erro ao salvar. Verifique os dados.'); 
+                    });
+                }
+                // Para POST, a resposta pode ser 201 Created, para PUT 200 OK.
+                // Não precisamos necessariamente do corpo da resposta aqui.
+                const addressModal = bootstrap.Modal.getInstance(document.getElementById('address-modal'));
+                addressModal.hide();
+                fetchAndDisplayAddresses(currentUserIdForAddress, token);
+            })
+            .catch(function(err) {
+                console.error("Erro ao salvar endereço:", err);
+                modalError.textContent = err.message;
+                modalError.classList.remove('d-none');
+            });
+        });
+    } else {
+        console.error("Botão 'save-address-btn' não encontrado!");
+    }
+
+
     // Ponto de entrada do script que roda quando a página carrega
     // Substitua o seu listener 'DOMContentLoaded' por este código completo.
     document.addEventListener('DOMContentLoaded', function() {
