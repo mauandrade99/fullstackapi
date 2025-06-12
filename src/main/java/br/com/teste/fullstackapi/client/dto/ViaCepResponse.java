@@ -8,10 +8,10 @@ public class ViaCepResponse {
     private String bairro;
     private String localidade; // ViaCEP retorna 'localidade' em vez de 'cidade'
     private String uf;         // E 'uf' em vez de 'estado'
-    private String ibge;
-    private String gia;
-    private String ddd;
-    private String siafi;
+    //private String ibge;
+    //private String gia;
+    //private String ddd;
+    //private String siafi;
     private boolean erro; // ViaCEP retorna erro=true se o CEP for inválido
     
     // Getters e Setters para todos os campos

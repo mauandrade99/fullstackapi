@@ -30,11 +30,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        // Apenas os endpoints de autenticação são públicos
+
                         .requestMatchers("/api/auth/**").permitAll()
-                        
-                        // QUALQUER outra requisição exige apenas que o usuário esteja autenticado.
-                        // A verificação de ROLE será feita no método do controller.
                         .anyRequest().authenticated() 
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

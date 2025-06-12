@@ -38,6 +38,20 @@ public class AuthenticationService {
         return new AuthenticationResponse(jwtToken);
     }
 
+    public AuthenticationResponse registerAdmin(RegisterRequest request) {
+
+        User adminUser = new User();
+        adminUser.setNome(request.getNome());
+        adminUser.setEmail(request.getEmail());
+        adminUser.setSenha(passwordEncoder.encode(request.getSenha()));
+        adminUser.setRole(Role.ROLE_ADMIN); // A grande diferença está aqui!
+        
+        userRepository.save(adminUser);
+
+        var jwtToken = jwtService.generateToken(adminUser);
+        return new AuthenticationResponse(jwtToken);
+    }
+
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha())
