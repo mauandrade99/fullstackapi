@@ -1,12 +1,15 @@
 package br.com.teste.fullstackapi.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import br.com.teste.fullstackapi.client.ViaCepClient;
 import br.com.teste.fullstackapi.client.dto.ViaCepResponse;
 import br.com.teste.fullstackapi.model.Address;
 import br.com.teste.fullstackapi.model.User;
 import br.com.teste.fullstackapi.repository.AddressRepository;
 import br.com.teste.fullstackapi.repository.UserRepository;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AddressService {
@@ -48,4 +51,31 @@ public class AddressService {
         // 5. Salva o novo endereço no banco
         return addressRepository.save(newAddress);
     }
+
+    public Address updateAddress(Long addressId, Address addressDetails) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Endereço não encontrado com o id: " + addressId));
+
+        // Atualiza apenas os campos que podem ser modificados pelo usuário
+        address.setNumero(addressDetails.getNumero());
+        address.setComplemento(addressDetails.getComplemento());
+        // CEP e outros dados do ViaCEP não são alterados aqui.
+        // Se a alteração de CEP fosse necessária, teríamos que chamar o ViaCEP novamente.
+
+        return addressRepository.save(address);
+    }
+
+    public void deleteAddress(Long addressId) {
+        if (!addressRepository.existsById(addressId)) {
+            throw new RuntimeException("Endereço não encontrado com o id: " + addressId);
+        }
+        addressRepository.deleteById(addressId);
+    }
+
+    public List<Address> findAddressesByUserId(Long userId) {
+    if (!userRepository.existsById(userId)) {
+        throw new RuntimeException("Usuário não encontrado!");
+    }
+    return addressRepository.findByUsuarioId(userId);
+}
 }

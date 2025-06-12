@@ -1,19 +1,22 @@
 package br.com.teste.fullstackapi.security; 
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import br.com.teste.fullstackapi.model.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
@@ -37,9 +40,17 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    // Gera um token para um usuário
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> extraClaims = new HashMap<>();
+        
+        // Usando o pattern matching do instanceof
+        if (userDetails instanceof User user) { 
+            extraClaims.put("userId", user.getId());
+            extraClaims.put("authorities", user.getAuthorities().stream()
+                .map(auth -> auth.getAuthority()).collect(Collectors.toList()));
+        }
+        
+        return generateToken(extraClaims, userDetails);
     }
 
     // Gera um token com claims extras
