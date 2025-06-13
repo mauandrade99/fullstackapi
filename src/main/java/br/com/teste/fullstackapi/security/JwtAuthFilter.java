@@ -16,18 +16,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component // Marca esta classe como um componente Spring, para que possamos injetá-la
+@Component 
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-    // --- CONSTRUTOR SEM LOMBOK ---
+
     public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
-    // ----------------------------
+
 
     @Override
     protected void doFilterInternal(
@@ -40,11 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        // --- LOG DE DEBUG 1 ---
-        // System.out.println(">>> [JwtAuthFilter] Iniciando filtro para a requisição: " + request.getRequestURI());
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            // System.out.println(">>> [JwtAuthFilter] Sem token Bearer. Passando para o próximo filtro.");
             filterChain.doFilter(request, response);
             return;
         }
@@ -56,8 +52,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                // --- LOG DE DEBUG 2 ---
-                // System.out.println(">>> [JwtAuthFilter] Token válido! Autenticando usuário: " + userDetails.getUsername() + " com permissões: " + userDetails.getAuthorities());
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
@@ -67,7 +61,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
-                // --- LOG DE DEBUG 3 ---
                 // System.out.println(">>> [JwtAuthFilter] Token inválido!");
             }
         }

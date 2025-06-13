@@ -21,20 +21,17 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    // A chave secreta para assinar o token. Deve ser longa e segura.
-    // Vamos injetá-la a partir do application.properties.
+    //  injetá-la a partir do application.properties.
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
     
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
 
-    // Extrai o nome de usuário (email) do token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Extrai um "claim" (dado) específico do token
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -43,7 +40,6 @@ public class JwtService {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> extraClaims = new HashMap<>();
         
-        // Usando o pattern matching do instanceof
         if (userDetails instanceof User user) { 
             extraClaims.put("userId", user.getId());
             extraClaims.put("authorities", user.getAuthorities().stream()
@@ -53,7 +49,7 @@ public class JwtService {
         return generateToken(extraClaims, userDetails);
     }
 
-    // Gera um token com claims extras
+
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }

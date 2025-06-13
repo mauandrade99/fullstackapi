@@ -18,16 +18,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.teste.fullstackapi.repository.UserRepository;
 import br.com.teste.fullstackapi.security.dto.RegisterRequest;
 
-@SpringBootTest // Carrega o contexto completo da aplicação Spring
-@AutoConfigureMockMvc // Configura o MockMvc para fazer requisições HTTP falsas
-@Transactional // Garante que cada teste rode em uma transação que será revertida (rollback) no final
+@SpringBootTest 
+@AutoConfigureMockMvc 
+@Transactional 
 class AuthControllerIntegrationTest {
 
     @Autowired
-    private MockMvc mockMvc; // Objeto para simular as requisições HTTP
+    private MockMvc mockMvc; 
 
     @Autowired
-    private ObjectMapper objectMapper; // Para converter objetos Java em JSON
+    private ObjectMapper objectMapper; 
 
     @Autowired
     private UserRepository userRepository;
@@ -35,19 +35,18 @@ class AuthControllerIntegrationTest {
     @SuppressWarnings("unused") 
     @BeforeEach
     void setUp() {
-        // Limpa o repositório antes de cada teste para garantir isolamento
-        userRepository.deleteAll();
+       userRepository.deleteAll();
     }
 
     @Test
     void whenRegister_withValidData_shouldReturnToken() throws Exception {
-        // --- Arrange ---
+       
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setNome("Integration Test User");
         registerRequest.setEmail("integration.test@email.com");
         registerRequest.setSenha("password123");
 
-        // --- Act & Assert ---
+        
         mockMvc.perform(post("/api/auth/register") // Simula um POST para o endpoint
                         .contentType(MediaType.APPLICATION_JSON) // Define o tipo de conteúdo
                         .content(objectMapper.writeValueAsString(registerRequest))) // Converte o objeto para JSON e o coloca no corpo

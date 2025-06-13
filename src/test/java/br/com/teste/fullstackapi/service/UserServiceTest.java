@@ -18,7 +18,7 @@ import br.com.teste.fullstackapi.model.Role;
 import br.com.teste.fullstackapi.model.User;
 import br.com.teste.fullstackapi.repository.UserRepository;
 
-@ExtendWith(MockitoExtension.class) // Habilita o Mockito para este teste
+@ExtendWith(MockitoExtension.class) 
 class UserServiceTest {
 
     @Mock // Cria um mock (objeto falso) para o UserRepository
@@ -33,9 +33,8 @@ class UserServiceTest {
     private User user;
 
     @SuppressWarnings("unused") 
-    @BeforeEach // Este método roda antes de cada teste
+    @BeforeEach 
     void setUp() {
-        // Prepara um objeto User padrão para usar nos testes
         user = new User();
         user.setId(1L);
         user.setNome("Test User");

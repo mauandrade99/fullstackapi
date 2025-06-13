@@ -1,18 +1,17 @@
 package br.com.teste.fullstackapi.client.dto;
 
-// Classe para mapear a resposta JSON do ViaCEP
 public class ViaCepResponse {
     private String cep;
     private String logradouro;
     private String complemento;
     private String bairro;
-    private String localidade; // ViaCEP retorna 'localidade' em vez de 'cidade'
-    private String uf;         // E 'uf' em vez de 'estado'
+    private String localidade; 
+    private String uf;        
     //private String ibge;
     //private String gia;
     //private String ddd;
     //private String siafi;
-    private boolean erro; // ViaCEP retorna erro=true se o CEP for inválido
+    private boolean erro; 
     
     // Getters e Setters para todos os campos
     public String getCep() { return cep; }
@@ -29,5 +28,5 @@ public class ViaCepResponse {
     public void setUf(String uf) { this.uf = uf; }
     public boolean isErro() { return erro; }
     public void setErro(boolean erro) { this.erro = erro; }
-    // ... getters e setters para os outros campos se precisar ...
+
 }

@@ -1,11 +1,10 @@
-// src/main/java/br/com/teste/fullstackapi/service/UserService.java
 package br.com.teste.fullstackapi.service;
 
-// --- IMPORTAÇÕES ADICIONADAS ---
+
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired; // <-- IMPORTAR
-import org.springframework.data.domain.Page; // <-- IMPORTAR
+import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 import br.com.teste.fullstackapi.model.Role;
 import br.com.teste.fullstackapi.model.User;
 import br.com.teste.fullstackapi.repository.UserRepository;
-// ---------------------------------
+
 
 @Service
 public class UserService {

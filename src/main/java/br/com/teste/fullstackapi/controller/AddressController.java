@@ -29,7 +29,6 @@ public class AddressController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or @addressSecurityService.isOwner(authentication, #addressId)")
     public ResponseEntity<Address> createAddress(
             @PathVariable Long userId, 
             @Valid @RequestBody AddressCreateRequest request // 3. USA O DTO E ATIVA A VALIDAÇÃO
