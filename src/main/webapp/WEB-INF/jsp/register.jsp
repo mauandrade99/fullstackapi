@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body class="bg-light">
 
@@ -25,12 +26,26 @@
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" required>
                         </div>
+
+                        <!-- Campo de Senha com o ícone -->
                         <div class="mb-3">
                             <label for="password" class="form-label">Senha</label>
-                            <input type="password" class="form-control" id="password" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                </button>
+                            </div>
                         </div>
+
+                        <!-- Campo de Confirmação de Senha -->
+                        <div class="mb-3">
+                            <label for="confirm-password" class="form-label">Confirmar Senha</label>
+                            <input type="password" class="form-control" id="confirm-password" required>
+                        </div>
+
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="register-btn">
                                 <span id="register-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                 Registrar
                             </button>
@@ -49,59 +64,85 @@
 
 <!-- JavaScript -->
 <script>
-    document.getElementById('register-form').addEventListener('submit', function(event) {
+    const registerForm = document.getElementById('register-form');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+    const errorMessageDiv = document.getElementById('error-message');
+    const successMessageDiv = document.getElementById('success-message');
+    const spinner = document.getElementById('register-spinner');
+
+    // --- Lógica para Mostrar/Ocultar Senha ---
+    togglePasswordBtn.addEventListener('click', function () {
+        // Alterna o tipo do input entre 'password' e 'text'
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        confirmPasswordInput.setAttribute('type', type); // Também alterna o campo de confirmação
+
+        // Alterna o ícone do olho
+        togglePasswordIcon.classList.toggle('fa-eye');
+        togglePasswordIcon.classList.toggle('fa-eye-slash');
+    });
+
+
+    // --- Lógica do Formulário de Registro ---
+    registerForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
         
-        const errorMessageDiv = document.getElementById('error-message');
-        const successMessageDiv = document.getElementById('success-message');
-        const spinner = document.getElementById('register-spinner');
-
-
-        spinner.classList.remove('d-none');
+        // Esconde mensagens antigas
         errorMessageDiv.classList.add('d-none');
         successMessageDiv.classList.add('d-none');
 
+        // --- Validação de Confirmação de Senha (no lado do cliente) ---
+        if (password !== confirmPassword) {
+            errorMessageDiv.textContent = 'As senhas não coincidem. Por favor, tente novamente.';
+            errorMessageDiv.classList.remove('d-none');
+            return; // Interrompe o envio do formulário
+        }
 
+        // Feedback visual
+        spinner.classList.remove('d-none');
+        document.getElementById('register-btn').disabled = true;
+
+        // Consumo da API REST para registro
         fetch('/api/auth/register', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome: name, email: email, senha: password })
         })
-        .then(response => {
-            if (response.status === 400 || response.status === 500) { 
-                return response.json().then(err => { throw new Error('Erro ao registrar: ' + (err.details ? err.details.join(', ') : 'Tente novamente.'))});
-            }
+        .then(function(response) {
             if (!response.ok) {
-                throw new Error('Ocorreu um erro ao tentar registrar.');
+                return response.json().then(function(err) { 
+                    throw new Error(err.details ? err.details.join(', ') : 'Erro ao registrar.');
+                });
             }
             return response.json();
         })
-        .then(data => {
-
+        .then(function(data) {
+            // Sucesso!
             successMessageDiv.textContent = 'Registro realizado com sucesso! Redirecionando para o login...';
             successMessageDiv.classList.remove('d-none');
-
-            localStorage.setItem('jwt_token', data.token);
-
-            setTimeout(() => {
+            setTimeout(function() {
                 window.location.href = '/login'; 
-            }, 2000); 
+            }, 2000);
         })
-        .catch(error => {
+        .catch(function(error) {
             errorMessageDiv.textContent = error.message;
             errorMessageDiv.classList.remove('d-none');
         })
-        .finally(() => {
+        .finally(function() {
             spinner.classList.add('d-none');
+            document.getElementById('register-btn').disabled = false;
         });
     });
 </script>
+
 
 </body>
 </html>
