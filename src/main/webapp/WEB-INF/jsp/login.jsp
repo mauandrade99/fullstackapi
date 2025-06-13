@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body class="bg-light">
 
@@ -21,9 +22,14 @@
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" required>
                         </div>
-                        <div class="mb-3">
+                         <div class="mb-3">
                             <label for="password" class="form-label">Senha</label>
-                            <input type="password" class="form-control" id="password" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">
@@ -44,6 +50,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    const passwordInput = document.getElementById('password');
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+    togglePasswordBtn.addEventListener('click', function () {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        togglePasswordIcon.classList.toggle('fa-eye');
+        togglePasswordIcon.classList.toggle('fa-eye-slash');
+    });
+
+
     document.getElementById('login-form').addEventListener('submit', function(event) {
         event.preventDefault(); 
 
@@ -51,11 +69,12 @@
         const password = document.getElementById('password').value;
         const errorMessageDiv = document.getElementById('error-message');
         const spinner = document.getElementById('login-spinner');
-
-        
+       
         spinner.classList.remove('d-none');
         errorMessageDiv.classList.add('d-none');
 
+        // --- Lógica para Mostrar/Ocultar Senha ---
+       
        
         fetch('/api/auth/authenticate', {
             method: 'POST',

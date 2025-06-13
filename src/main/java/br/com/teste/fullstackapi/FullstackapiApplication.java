@@ -12,4 +12,4 @@ public class FullstackapiApplication {
 		SpringApplication.run(FullstackapiApplication.class, args);
 	}
 
-}
+} 
