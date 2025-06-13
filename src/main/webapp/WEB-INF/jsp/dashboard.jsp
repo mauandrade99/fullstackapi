@@ -145,51 +145,63 @@
 
     // Função para buscar e exibir os endereços de um usuário
     function fetchAndDisplayAddresses(userId, token) {
-        const addressesPlaceholder = document.getElementById('addresses-placeholder');
-        const addressesLoader = document.getElementById('addresses-loader');
-        const addressesContent = document.getElementById('addresses-content');
-        const addAddressBtn = document.getElementById('add-address-btn');
-
-        currentUserIdForAddress = userId;
-        addressesPlaceholder.classList.add('d-none');
-        addressesLoader.classList.remove('d-none');
-        addressesContent.innerHTML = '';
-        addAddressBtn.classList.remove('d-none');
-
-        fetch('/api/users/' + userId + '/addresses', 
-        { 
-            headers: { 'Authorization': 'Bearer ' + token } 
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(addresses) {
+         
+         const addressesPlaceholder = document.getElementById('addresses-placeholder');
+         const addressesLoader = document.getElementById('addresses-loader');
+         const addressesContent = document.getElementById('addresses-content');
+         const addAddressBtn = document.getElementById('add-address-btn');
+         
+         if ( userId == 0 ) {
+            
+            addressesPlaceholder.classList.remove('d-none');
             addressesLoader.classList.add('d-none');
-            if (addresses.length === 0) {
-                addressesContent.innerHTML = '<p class="text-muted">Nenhum endereço cadastrado.</p>';
-            } else {
-                const addressList = document.createElement('ul');
-                addressList.className = 'list-group';
-                addresses.forEach(function(addr) {
-                    const item = document.createElement('li');
-                    item.className = 'list-group-item d-flex justify-content-between align-items-center';
-                    
-                    item.innerHTML = 
-                        '<div>' +
-                            '<strong>' + addr.logradouro + ', ' + addr.numero + '</strong>' + (addr.complemento == ''?'':', '+addr.complemento) + '<br>' +
-                            addr.bairro + ' - ' + addr.cidade + '/' + addr.estado + '<br>' +
-                            'CEP: ' + addr.cep +
-                        '</div>' +
-                        '<div>' +
-                            '<button class="btn btn-sm btn-primary me-2" onclick=\'editAddress(' + JSON.stringify(addr) + ')\'><i class="fas fa-edit"></i></button>' +
-                            '<button class="btn btn-sm btn-danger" onclick="deleteAddress(' + addr.id + ', ' + userId + ')"><i class="fas fa-trash"></i></button>' +
-                        '</div>';
-                    addressList.appendChild(item);
-                });
-                addressesContent.appendChild(addressList);
-            }
-        }).catch(function(err) {
-            addressesLoader.classList.add('d-none');
-            addressesContent.innerHTML = '<div class="alert alert-danger">Erro ao carregar endereços.</div>';
-        });
+            addressesContent.innerHTML = '';
+            addAddressBtn.classList.add('d-none');
+            document.getElementById('addresses-user-info').innerHTML = '';
+
+         } else {
+
+            currentUserIdForAddress = userId;
+            addressesPlaceholder.classList.add('d-none');
+            addressesLoader.classList.remove('d-none');
+            addressesContent.innerHTML = '';
+            addAddressBtn.classList.remove('d-none');
+
+            fetch('/api/users/' + userId + '/addresses', 
+            { 
+                headers: { 'Authorization': 'Bearer ' + token } 
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(addresses) {
+                addressesLoader.classList.add('d-none');
+                if (addresses.length === 0) {
+                    addressesContent.innerHTML = '<p class="text-muted">Nenhum endereço cadastrado.</p>';
+                } else {
+                    const addressList = document.createElement('ul');
+                    addressList.className = 'list-group';
+                    addresses.forEach(function(addr) {
+                        const item = document.createElement('li');
+                        item.className = 'list-group-item d-flex justify-content-between align-items-center';
+                        
+                        item.innerHTML = 
+                            '<div>' +
+                                '<strong>' + addr.logradouro + ', ' + addr.numero + '</strong>' + (addr.complemento == ''?'':', '+addr.complemento) + '<br>' +
+                                addr.bairro + ' - ' + addr.cidade + '/' + addr.estado + '<br>' +
+                                'CEP: ' + addr.cep +
+                            '</div>' +
+                            '<div>' +
+                                '<button class="btn btn-sm btn-primary me-2" onclick=\'editAddress(' + JSON.stringify(addr) + ')\'><i class="fas fa-edit"></i></button>' +
+                                '<button class="btn btn-sm btn-danger" onclick="deleteAddress(' + addr.id + ', ' + userId + ')"><i class="fas fa-trash"></i></button>' +
+                            '</div>';
+                        addressList.appendChild(item);
+                    });
+                    addressesContent.appendChild(addressList);
+                }
+            }).catch(function(err) {
+                addressesLoader.classList.add('d-none');
+                addressesContent.innerHTML = '<div class="alert alert-danger">Erro ao carregar endereços.</div>';
+            });
+        }
     }
 
 
@@ -242,6 +254,8 @@
                     document.getElementById('addresses-user-info').innerHTML = '<strong>Exibindo endereços de: ' + user.nome + '</strong>';
                     fetchAndDisplayAddresses(user.id, token);
                 });
+
+                fetchAndDisplayAddresses(0);
                 
                 usersList.appendChild(listItem);
             });
