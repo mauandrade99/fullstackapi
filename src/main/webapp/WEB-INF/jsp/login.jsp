@@ -42,22 +42,21 @@
     </div>
 </div>
 
-<!-- Bootstrap JS (opcional, mas recomendado) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.getElementById('login-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Impede o envio tradicional do formulário
+        event.preventDefault(); 
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const errorMessageDiv = document.getElementById('error-message');
         const spinner = document.getElementById('login-spinner');
 
-        // Feedback visual: mostra o loader e esconde o erro
+        
         spinner.classList.remove('d-none');
         errorMessageDiv.classList.add('d-none');
 
-        // 4. Consumo da API REST com fetch
+       
         fetch('/api/auth/authenticate', {
             method: 'POST',
             headers: {
@@ -67,23 +66,19 @@
         })
         .then(response => {
             if (!response.ok) {
-                // Se a resposta não for 2xx, lança um erro para ser pego pelo .catch
                 throw new Error('Email ou senha inválidos.');
             }
             return response.json();
         })
         .then(data => {
-            // Sucesso! Salva o token e redireciona para o dashboard
             localStorage.setItem('jwt_token', data.token);
-            window.location.href = '/dashboard'; // Redireciona para a página do dashboard
+            window.location.href = '/dashboard'; 
         })
         .catch(error => {
-            // 5. Feedback visual de erro
             errorMessageDiv.textContent = error.message;
             errorMessageDiv.classList.remove('d-none');
         })
         .finally(() => {
-            // Esconde o loader, independentemente do resultado
             spinner.classList.add('d-none');
         });
     });

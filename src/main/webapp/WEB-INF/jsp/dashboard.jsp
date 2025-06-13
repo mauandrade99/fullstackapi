@@ -24,7 +24,7 @@
     <hr>
     
     <div class="row g-4">
-        <!-- Card da Esquerda: Lista de Usuários (Apenas para Admin) -->
+
         <div class="col-md-5" id="admin-section">
             <div class="card h-100">
                 <div class="card-header">
@@ -37,11 +37,22 @@
                     <ul class="list-group" id="users-list">
                         <!-- Itens da lista serão inseridos aqui -->
                     </ul>
+                    <nav aria-label="Paginação de usuários" class="mt-4 d-none" id="pagination-controls">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" id="prev-page-item">
+                                <a class="page-link" href="#" id="prev-page-btn">Anterior</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link" id="page-info">Página 1 de 1</span>
+                            </li>
+                            <li class="page-item" id="next-page-item">
+                                <a class="page-link" href="#" id="next-page-btn">Próxima</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
-
-        <!-- Card da Direita: Detalhes e Endereços do Usuário -->
         <div class="col-md-7" id="address-column">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -161,7 +172,6 @@
                     const item = document.createElement('li');
                     item.className = 'list-group-item d-flex justify-content-between align-items-center';
                     
-                    // Usando concatenação de strings
                     item.innerHTML = 
                         '<div>' +
                             '<strong>' + addr.logradouro + ', ' + addr.numero + '</strong>' + (addr.complemento == ''?'':', '+addr.complemento) + '<br>' +
@@ -182,25 +192,39 @@
         });
     }
 
-    // Função para admin buscar e listar usuários
-    function fetchUsersForAdmin(token) {
+
+    let currentPage = 0;
+    const pageSize = 8; 
+
+    function fetchUsersForAdmin(token, page = 0) {
+        console.log('Buscando usuários para a página: ' + page);
+        currentPage = page; 
+
         const usersList = document.getElementById('users-list');
         const loader = document.getElementById('users-loader');
-        fetch('/api/users?sort=nome,asc', { headers: { 'Authorization': 'Bearer ' + token } })
+        const paginationControls = document.getElementById('pagination-controls');
+
+        loader.style.display = 'block';
+        usersList.innerHTML = '';
+        paginationControls.classList.add('d-none'); 
+
+        const url = '/api/users?page=' + page + '&size=' + pageSize + '&sort=nome,asc';
+
+        fetch(url, { headers: { 'Authorization': 'Bearer ' + token } })
         .then(function(res) { return res.json(); })
-        .then(function(data) {
-            loader.classList.add('d-none');
-            usersList.innerHTML = '';
-            data.content.forEach(function(user) {
-                const listItem = document.createElement('div'); // Mudar para div para conter mais elementos
+        .then(function(pageData) {
+            loader.style.display = 'none';
+            
+            pageData.content.forEach(function(user) {
+                const listItem = document.createElement('div'); 
                 listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
 
                 const userData = parseJwt(token);
                 const loggedInUserId = userData.userId;
 
-                // Usando concatenação de strings
+
                 let deleteButtonHtml = '';
-                // Regra de JS: não mostra o botão de excluir se o ID do usuário da lista for igual ao ID do admin logado
+               
                 if (user.id !== loggedInUserId) {
                     deleteButtonHtml = '<button class="btn btn-sm btn-danger" onclick="confirmUserDelete(' + user.id + ')"><i class="fas fa-trash"></i></button>';
                 }
@@ -209,7 +233,6 @@
                     '<a href="#" class="text-decoration-none text-dark flex-grow-1 user-select-link">' + user.nome + ' (' + user.email + ')' + '</a>' +
                     deleteButtonHtml;
 
-                // Adiciona o listener para selecionar o usuário
                 listItem.querySelector('.user-select-link').addEventListener('click', function(e) {
                     e.preventDefault();
                     document.querySelectorAll('#users-list .list-group-item').forEach(function(item) {
@@ -222,12 +245,38 @@
                 
                 usersList.appendChild(listItem);
             });
-        }).catch(function(err) {
+
+            updatePaginationControls(pageData);
+        })
+        .catch(function(err) {
+            console.error("Erro no fetch de usuários:", err);
             loader.innerHTML = '<div class="alert alert-danger">Erro ao carregar usuários.</div>';
         });
     }
 
-    // Funções para o modal
+    function updatePaginationControls(pageData) {
+        const paginationControls = document.getElementById('pagination-controls');
+        const prevPageItem = document.getElementById('prev-page-item');
+        const nextPageItem = document.getElementById('next-page-item');
+        const pageInfo = document.getElementById('page-info');
+
+        paginationControls.classList.remove('d-none');
+
+        pageInfo.textContent = 'Página ' + (pageData.number + 1) + ' de ' + pageData.totalPages;
+
+        if (pageData.first) {
+            prevPageItem.classList.add('disabled');
+        } else {
+            prevPageItem.classList.remove('disabled');
+        }
+
+        if (pageData.last) {
+            nextPageItem.classList.add('disabled');
+        } else {
+            nextPageItem.classList.remove('disabled');
+        }
+    }
+
     function editAddress(address) {
         document.getElementById('modal-title').textContent = 'Editar Endereço';
         document.getElementById('address-form').reset();
@@ -238,12 +287,10 @@
         addressModal.show();
     }
 
-    // Adicione esta nova função ao seu script
     function confirmUserDelete(userId) {
         const confirmBtn = document.getElementById('confirm-delete-btn');
         const modalBody = document.querySelector('#confirm-delete-modal .modal-body');
         
-        // Customiza o modal para a exclusão de usuário
         modalBody.innerHTML = '<p>Tem certeza que deseja excluir este <strong>usuário</strong>? Todos os seus endereços também serão excluídos. Esta ação não pode ser desfeita.</p>';
         confirmDeleteModal.show();
         
@@ -257,13 +304,12 @@
             })
             .then(function(res) {
                 if (!res.ok) {
-                    // Se houver um corpo de erro, tente lê-lo
+                    
                     return res.text().then(text => { throw new Error('Erro ao excluir usuário: ' + text) });
                 }
-                // Se for bem-sucedido, não há corpo (204 No Content)
-                // Atualiza a lista de usuários para refletir a exclusão
+                
                 fetchUsersForAdmin(token);
-                // Limpa a seção de endereços, já que o usuário foi removido
+
                 document.getElementById('addresses-content').innerHTML = '';
                 document.getElementById('addresses-user-info').innerHTML = '';
                 document.getElementById('add-address-btn').classList.add('d-none');
@@ -274,17 +320,14 @@
         }
     }
 
-    // Substitua a função deleteAddress existente por esta
+
     function deleteAddress(addressId, userId) {
         const confirmBtn = document.getElementById('confirm-delete-btn');
-        
-        // Abre o modal de confirmação
+
         confirmDeleteModal.show();
-        
-        // Adiciona um listener de clique ao botão de confirmação do modal.
-        // Usamos .onclick para substituir qualquer listener anterior e evitar múltiplos deletes.
+
         confirmBtn.onclick = function() {
-            // Esconde o modal antes de fazer a chamada
+
             confirmDeleteModal.hide();
             
             const token = localStorage.getItem('jwt_token');
@@ -294,11 +337,11 @@
             })
             .then(function(res) {
                 if (!res.ok) throw new Error('Erro ao excluir endereço.');
-                // Atualiza a lista de endereços após a exclusão bem-sucedida
+
                 fetchAndDisplayAddresses(userId, token);
             })
             .catch(function(err) { 
-                alert(err.message); // Mantém um alerta simples para o erro de exclusão
+                alert(err.message); 
             });
         }
     }
@@ -336,8 +379,6 @@
                         throw new Error(err.details ? err.details.join(', ') : 'Erro ao salvar. Verifique os dados.'); 
                     });
                 }
-                // Para POST, a resposta pode ser 201 Created, para PUT 200 OK.
-                // Não precisamos necessariamente do corpo da resposta aqui.
                 const addressModal = bootstrap.Modal.getInstance(document.getElementById('address-modal'));
                 addressModal.hide();
                 fetchAndDisplayAddresses(currentUserIdForAddress, token);
@@ -353,8 +394,6 @@
     }
 
 
-    // Ponto de entrada do script que roda quando a página carrega
-    // Substitua o seu listener 'DOMContentLoaded' por este código completo.
     document.addEventListener('DOMContentLoaded', function() {
         if (!token) {
             window.location.href = '/login';
@@ -363,7 +402,7 @@
 
         const userDataFromToken = parseJwt(token);
         if (!userDataFromToken || !userDataFromToken.userId) {
-            // Se o token for inválido ou não tiver o ID, desloga
+
             localStorage.removeItem('jwt_token');
             window.location.href = '/login';
             return;
@@ -372,26 +411,23 @@
         const loggedInUserId = userDataFromToken.userId;
         const isAdmin = userDataFromToken.authorities && userDataFromToken.authorities.includes('ROLE_ADMIN');
 
-        // --- NOVA LÓGICA PARA BUSCAR O NOME DO USUÁRIO ---
-        // Faz uma chamada à API para obter os detalhes do usuário logado
+
         fetch('/api/users/' + loggedInUserId, {
             headers: { 'Authorization': 'Bearer ' + token }
         })
         .then(function(response) {
             if (!response.ok) {
-                // Se não conseguir buscar o usuário, desloga por segurança
                 throw new Error('Sessão inválida.');
             }
             return response.json();
         })
         .then(function(userProfile) {
-            // Agora temos o objeto completo do usuário, incluindo o nome
+
             document.getElementById('welcome-message').innerHTML = '<h2>Bem-vindo, ' + userProfile.nome + '!</h2>';
             
-            // Continua a lógica original após buscar o perfil com sucesso
-            if (isAdmin) {
-                fetchUsersForAdmin(token);
-            } else {
+
+            if (!isAdmin) {
+                
                 document.getElementById('admin-section').style.display = 'none';
                 document.getElementById('address-column').className = 'col-md-12';
                 document.getElementById('addresses-placeholder').textContent = '';
@@ -401,18 +437,42 @@
         })
         .catch(function(error) {
             console.error('Erro ao buscar perfil do usuário:', error);
-            // Se houver qualquer erro (ex: token expirado), limpa e redireciona para o login
             localStorage.removeItem('jwt_token');
             window.location.href = '/login';
         });
-        // ---------------------------------------------------
 
-        // Listeners de eventos para os botões (permanecem os mesmos)
         document.getElementById('logout-button').addEventListener('click', function() {
             localStorage.removeItem('jwt_token');
             window.location.href = '/login';
         });
-        // ... outros listeners para o modal de endereço ...
+
+        document.getElementById('prev-page-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentPage > 0) {
+                fetchUsersForAdmin(token, currentPage - 1);
+            }
+        });
+
+        document.getElementById('next-page-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            fetchUsersForAdmin(token, currentPage + 1);
+        });
+
+        document.getElementById('add-address-btn').addEventListener('click', function() {
+            console.log("Botão 'Adicionar Endereço' clicado. Resetando o modal.");
+
+            document.getElementById('modal-title').textContent = 'Adicionar Novo Endereço';
+            document.getElementById('address-form').reset();
+            document.getElementById('address-id').value = ''; 
+            document.getElementById('cep').readOnly = false;
+            document.getElementById('modal-error').classList.add('d-none');
+        });
+        
+        if (isAdmin) {
+            fetchUsersForAdmin(token, 0);
+        }
+
     });
 </script>
     

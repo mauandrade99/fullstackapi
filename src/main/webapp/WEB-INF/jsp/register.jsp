@@ -60,12 +60,12 @@
         const successMessageDiv = document.getElementById('success-message');
         const spinner = document.getElementById('register-spinner');
 
-        // Feedback visual
+
         spinner.classList.remove('d-none');
         errorMessageDiv.classList.add('d-none');
         successMessageDiv.classList.add('d-none');
 
-        // Consumo da API REST para registro
+
         fetch('/api/auth/register', {
             method: 'POST',
             headers: {
@@ -74,7 +74,7 @@
             body: JSON.stringify({ nome: name, email: email, senha: password })
         })
         .then(response => {
-            if (response.status === 400 || response.status === 500) { // Exemplo de tratamento de erro de e-mail duplicado
+            if (response.status === 400 || response.status === 500) { 
                 return response.json().then(err => { throw new Error('Erro ao registrar: ' + (err.details ? err.details.join(', ') : 'Tente novamente.'))});
             }
             if (!response.ok) {
@@ -83,17 +83,15 @@
             return response.json();
         })
         .then(data => {
-            // Sucesso!
+
             successMessageDiv.textContent = 'Registro realizado com sucesso! Redirecionando para o login...';
             successMessageDiv.classList.remove('d-none');
 
-            // Salva o token (opcional no registro, mas pode ser útil)
             localStorage.setItem('jwt_token', data.token);
 
-            // Redireciona para a página de login ou dashboard após um tempo
             setTimeout(() => {
                 window.location.href = '/login'; 
-            }, 2000); // Espera 2 segundos antes de redirecionar
+            }, 2000); 
         })
         .catch(error => {
             errorMessageDiv.textContent = error.message;
