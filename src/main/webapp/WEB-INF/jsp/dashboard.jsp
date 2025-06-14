@@ -25,7 +25,6 @@
     <hr>
     
     <div class="row g-4">
-
         <div class="col-12 col-lg-5" id="admin-section">
             <div class="card h-100">
                 <div class="card-header">

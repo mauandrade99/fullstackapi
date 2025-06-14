@@ -1,27 +1,27 @@
 /* Estilos Gerais (para todas as telas) */
 html, body {
     height: 100%;
-    margin: 0;
-    padding: 0;
+    margin: 0px;
+    padding: 0px;
 }
 
 /* Esta classe será o nosso contêiner principal para centralização */
 .full-height-container {
     min-height: 100%;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem; /* Adiciona um pequeno respiro nas bordas da tela */
 }
 
-
-.card-header h3 {
-    /* Reduz um pouco o tamanho do título dos cards */
-    font-size: 1.25rem; 
+.container{
+    max-width: 100% !important; 
 }
 
-
-
+.card-header h3 {
+    font-size: 1.25rem; 
+}
 
 
 @media (max-width: 767px) {

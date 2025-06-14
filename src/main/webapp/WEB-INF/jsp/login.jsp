@@ -13,7 +13,7 @@
 <body class="bg-light">
 
 <div class="full-height-container">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+    <div class="col-12 col-sm-10 col-md-12 col-lg-6 col-xl-4">
         <div class="card shadow-sm border-0 login-card-custom">
             <div class="card-body p-4 p-md-5">
                 <h3 class="card-title text-center mb-4">Login</h3>
