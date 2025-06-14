@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title text-center mb-4">Login</h3>
-                    <form id="login-form">
+                    <form id="login-form" action="${pageContext.request.contextPath}/api/auth/authenticate" method="post">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" required>
@@ -40,7 +40,7 @@
                         <div id="error-message" class="alert alert-danger mt-3 d-none" role="alert"></div>
                     </form>
                     <div class="text-center mt-3">
-                        <p>Não tem uma conta? <a href="/register">Registre-se aqui</a></p>
+                        <p>Não tem uma conta? <a href="${pageContext.request.contextPath}/register">Registre-se aqui</a></p>
                     </div>
                 </div>
             </div>
@@ -50,6 +50,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    const contextPath = '/fullstack';
+
     const passwordInput = document.getElementById('password');
     const togglePasswordBtn = document.getElementById('togglePassword');
     const togglePasswordIcon = document.getElementById('togglePasswordIcon');
@@ -76,7 +78,7 @@
         // --- Lógica para Mostrar/Ocultar Senha ---
        
        
-        fetch('/api/auth/authenticate', {
+        fetch(contextPath + '/api/auth/authenticate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -91,7 +93,7 @@
         })
         .then(data => {
             localStorage.setItem('jwt_token', data.token);
-            window.location.href = '/dashboard'; 
+            window.location.href = contextPath + '/dashboard'; 
         })
         .catch(error => {
             errorMessageDiv.textContent = error.message;

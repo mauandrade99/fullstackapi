@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title text-center mb-4">Criar Conta</h3>
-                    <form id="register-form">
+                    <form id="register-form" action="${pageContext.request.contextPath}/api/auth/register" method="post">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nome Completo</label>
                             <input type="text" class="form-control" id="name" required>
@@ -54,7 +54,7 @@
                         <div id="success-message" class="alert alert-success mt-3 d-none" role="alert"></div>
                     </form>
                     <div class="text-center mt-3">
-                        <p>Já tem uma conta? <a href="/login">Faça login aqui</a></p>
+                        <p>Já tem uma conta? <a href="${pageContext.request.contextPath}/login">Faça login aqui</a></p>
                     </div>
                 </div>
             </div>
@@ -64,6 +64,8 @@
 
 <!-- JavaScript -->
 <script>
+    const contextPath = '/fullstack';
+
     const registerForm = document.getElementById('register-form');
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('confirm-password');
@@ -111,7 +113,7 @@
         document.getElementById('register-btn').disabled = true;
 
         // Consumo da API REST para registro
-        fetch('/api/auth/register', {
+        fetch(contextPath + '/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome: name, email: email, senha: password })
@@ -129,7 +131,7 @@
             successMessageDiv.textContent = 'Registro realizado com sucesso! Redirecionando para o login...';
             successMessageDiv.classList.remove('d-none');
             setTimeout(function() {
-                window.location.href = '/login'; 
+                window.location.href = contextPath+'/login'; 
             }, 2000);
         })
         .catch(function(error) {

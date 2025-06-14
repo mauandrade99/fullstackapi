@@ -14,7 +14,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="/dashboard"><i class="fas fa-home"></i> Home</a>
+        <a class="navbar-brand" href="${pageContext.request.contextPath}/dashboard"><i class="fas fa-home"></i> Home</a>
         <button id="logout-button" class="btn btn-outline-light">Sair <i class="fas fa-sign-out-alt"></i></button>
     </div>
 </nav>
@@ -142,6 +142,7 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    const contextPath = '/fullstack';
     // Variáveis globais para o script
     const token = localStorage.getItem('jwt_token');
     let currentUserIdForAddress = null; // Guarda o ID do usuário cujos endereços estamos vendo/editando
@@ -181,7 +182,7 @@
             addressesContent.innerHTML = '';
             addAddressBtn.classList.remove('d-none');
 
-            fetch('/api/users/' + userId + '/addresses', 
+            fetch(contextPath + '/api/users/' + userId + '/addresses', 
             { 
                 headers: { 'Authorization': 'Bearer ' + token } 
             })
@@ -233,7 +234,7 @@
         usersList.innerHTML = '';
         paginationControls.classList.add('d-none'); 
 
-        const url = '/api/users?page=' + page + '&size=' + pageSize + '&sort=nome,asc';
+        const url = contextPath + '/api/users?page=' + page + '&size=' + pageSize + '&sort=nome,asc';
 
         fetch(url, { headers: { 'Authorization': 'Bearer ' + token } })
         .then(function(res) { return res.json(); })
@@ -328,7 +329,7 @@
             confirmDeleteModal.hide();
             
             const token = localStorage.getItem('jwt_token');
-            fetch('/api/users/' + userId, {
+            fetch(contextPath + '/api/users/' + userId, {
                 method: 'DELETE',
                 headers: { 'Authorization': 'Bearer ' + token }
             })
@@ -361,7 +362,7 @@
             confirmDeleteModal.hide();
             
             const token = localStorage.getItem('jwt_token');
-            fetch('/api/users/' + userId + '/addresses/' + addressId, {
+            fetch(contextPath + '/api/users/' + userId + '/addresses/' + addressId, {
                 method: 'DELETE',
                 headers: { 'Authorization': 'Bearer ' + token }
             })
@@ -388,7 +389,7 @@
             
             modalError.classList.add('d-none');
             
-            let url = '/api/users/' + currentUserIdForAddress + '/addresses';
+            let url = contextPath + '/api/users/' + currentUserIdForAddress + '/addresses';
             let method = 'POST';
             let body = { cep: cep, numero: numero, complemento: complemento };
 
@@ -424,7 +425,7 @@
     }
 
     const changeCep = document.getElementById('cep');
-    if (saveBtn) {
+    if (changeCep) {
         changeCep.addEventListener('change', function() {
 
             const cep = document.getElementById('cep').value;
@@ -448,10 +449,15 @@
                 return res.json();
             })
             .then(function(data) {
-                document.getElementById('logradouro').value = data.logradouro;
-                document.getElementById('cidade').value = data.localidade;
-                document.getElementById('uf').value = data.uf;
-                return true;
+                if (data.logradouro != undefined) {
+                    document.getElementById('logradouro').value = data.logradouro;
+                    document.getElementById('cidade').value = data.localidade;
+                    document.getElementById('uf').value = data.uf;
+                    return true;
+                } else {
+                    throw new Error('Cep Inexistente.'); 
+                }
+                
             })
             .catch(function(err) {
                 console.error("Erro ao consultar viacep:", err);
@@ -467,7 +473,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         if (!token) {
-            window.location.href = '/login';
+            window.location.href = contextPath + '/login';
             return;
         }
 
@@ -475,7 +481,7 @@
         if (!userDataFromToken || !userDataFromToken.userId) {
 
             localStorage.removeItem('jwt_token');
-            window.location.href = '/login';
+            window.location.href = contextPath + '/login';
             return;
         }
 
@@ -483,7 +489,7 @@
         const isAdmin = userDataFromToken.authorities && userDataFromToken.authorities.includes('ROLE_ADMIN');
 
 
-        fetch('/api/users/' + loggedInUserId, {
+        fetch(contextPath + '/api/users/' + loggedInUserId, {
             headers: { 'Authorization': 'Bearer ' + token }
         })
         .then(function(response) {
@@ -509,12 +515,12 @@
         .catch(function(error) {
             console.error('Erro ao buscar perfil do usuário:', error);
             localStorage.removeItem('jwt_token');
-            window.location.href = '/login';
+            window.location.href = contextPath + '/login';
         });
 
         document.getElementById('logout-button').addEventListener('click', function() {
             localStorage.removeItem('jwt_token');
-            window.location.href = '/login';
+            window.location.href = contextPath + '/login';
         });
 
         document.getElementById('prev-page-btn').addEventListener('click', function(e) {
