@@ -37,7 +37,7 @@ public class SecurityConfig {
             
             .authorizeHttpRequests(authorize -> authorize
                 // Dentro da API, /api/auth/** é público
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**","/css/**", "/js/**").permitAll()
                 // Qualquer outro endpoint da API é protegido
                 .anyRequest().authenticated()
             )

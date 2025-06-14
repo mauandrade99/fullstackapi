@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
     
     <div class="row g-4">
 
-        <div class="col-md-5" id="admin-section">
+        <div class="col-12 col-lg-5" id="admin-section">
             <div class="card h-100">
                 <div class="card-header">
                     <h3><i class="fas fa-users"></i> Usuários</h3>
@@ -53,7 +54,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7" id="address-column">
+        <div class="col-12 col-lg-7" id="address-column">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="mb-0"><i class="fas fa-map-marker-alt"></i> Endereços</h3>

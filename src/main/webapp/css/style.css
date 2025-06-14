@@ -1,0 +1,85 @@
+/* Estilos Gerais (para todas as telas) */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Esta classe será o nosso contêiner principal para centralização */
+.full-height-container {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem; /* Adiciona um pequeno respiro nas bordas da tela */
+}
+
+
+.card-header h3 {
+    /* Reduz um pouco o tamanho do título dos cards */
+    font-size: 1.25rem; 
+}
+
+
+
+
+
+@media (max-width: 767px) {
+
+    /* Ajusta o layout principal do dashboard */
+    #admin-section, #address-column {
+        /* Remove a divisão em colunas e faz cada card ocupar 100% da largura */
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Adiciona um espaçamento entre os cards quando eles empilham */
+    #address-column {
+        margin-top: 1.5rem;
+    }
+
+    /* Reduz o tamanho da fonte da mensagem de boas-vindas */
+    #welcome-message h2 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    /* Ajusta o botão de adicionar endereço para ocupar a largura toda */
+    #add-address-btn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    /* Centraliza o header do card de endereço no mobile */
+    .card-header.d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    
+}
+
+/* --- Media Query para Telas Muito Pequenas --- */
+@media (max-width: 576px) {
+    /* Reduz ainda mais o padding do corpo para aproveitar melhor a tela */
+    .card-body {
+        padding: 1rem;
+    }
+
+    /* Garante que os botões dentro da lista de endereços não quebrem a linha */
+    .list-group-item.d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .list-group-item.d-flex > div:last-child {
+        margin-top: 0.75rem; /* Adiciona espaço entre os dados e os botões */
+    }
+
+}
+
+.card-body h3.card-title {
+    font-size: 1.75rem;
+    font-weight: 500;  
+    margin-bottom: 2rem !important; 
+}

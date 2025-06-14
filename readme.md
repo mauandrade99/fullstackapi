@@ -105,8 +105,8 @@ A aplicação iniciará e estará pronta quando você vir a mensagem `Tomcat sta
 
 Após a inicialização, acesse a aplicação no seu navegador:
 
-- **URL Padrão:** **[http://localhost:8080/login](http://localhost:8080/login)**
-- **Se configurou a porta 8081:** **[http://localhost:8081/login](http://localhost:8081/login)**
+- **URL Padrão:** **[http://localhost:8080/fulstack/login](http://localhost:8080/logifulstack/login)**
+- **Se configurou a porta 8081:** **[http://localhost:8081/fulstack/login](http://localhost:8081/fulstack/login)**
 
 ### 7. Tornando um Usuário Administrador (Opcional)
 
