@@ -109,6 +109,20 @@
                         <input type="text" class="form-control" id="cep" required maxlength="8">
                     </div>
                     <div class="mb-3">
+                        <label for="logradouro" class="form-label">Logradouro</label>
+                        <input type="text" class="form-control" id="logradouro" readonly="true">
+                    </div>
+                    <div class="form-group row">
+                        <div class="mb-3 col-md-9">
+                            <label for="cidade" class="form-label">Cidade</label>
+                            <input type="text" class="form-control" id="cidade"  readonly="true">
+                        </div>
+                        <div class="mb-3 col-md-3">
+                            <label for="uf" class="form-label">UF</label>
+                            <input type="text" class="form-control" id="uf"  readonly="true" >
+                        </div>
+                    </div>
+                    <div class="mb-3">
                         <label for="numero" class="form-label">Número</label>
                         <input type="text" class="form-control" id="numero" required>
                     </div>
@@ -209,7 +223,6 @@
     const pageSize = 8; 
 
     function fetchUsersForAdmin(token, page = 0) {
-        console.log('Buscando usuários para a página: ' + page);
         currentPage = page; 
 
         const usersList = document.getElementById('users-list');
@@ -298,6 +311,9 @@
         document.getElementById('cep').value = address.cep;
         document.getElementById('numero').value = address.numero;
         document.getElementById('complemento').value = address.complemento;
+        document.getElementById('logradouro').value = address.logradouro;
+        document.getElementById('cidade').value = address.cidade;
+        document.getElementById('uf').value = address.estado;
         addressModal.show();
     }
 
@@ -363,7 +379,7 @@
     const saveBtn = document.getElementById('save-address-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', function() {
-            console.log("Botão 'Salvar' do modal clicado.");
+
             const addressId = document.getElementById('address-id').value;
             const cep = document.getElementById('cep').value;
             const numero = document.getElementById('numero').value;
@@ -405,6 +421,47 @@
         });
     } else {
         console.error("Botão 'save-address-btn' não encontrado!");
+    }
+
+    const changeCep = document.getElementById('cep');
+    if (saveBtn) {
+        changeCep.addEventListener('change', function() {
+
+            const cep = document.getElementById('cep').value;
+            const modalError = document.getElementById('modal-error');
+            
+            modalError.classList.add('d-none');
+            
+            let url = 'https://viacep.com.br/ws/'+cep+'/json/';
+            let method = 'GET';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(function(res) {
+                if (!res.ok) {
+                    return res.json().then(function(err) { 
+                        throw new Error(err.details ? err.details.join(', ') : 'Erro ao consultar viacep.'); 
+                    });
+                }
+                return res.json();
+            })
+            .then(function(data) {
+                document.getElementById('logradouro').value = data.logradouro;
+                document.getElementById('cidade').value = data.localidade;
+                document.getElementById('uf').value = data.uf;
+                return true;
+            })
+            .catch(function(err) {
+                console.error("Erro ao consultar viacep:", err);
+                modalError.textContent = err.message;
+                modalError.classList.remove('d-none');
+                return false;
+            });
+        });
+    } else {
+        console.error("Cep não encontrado!");
     }
 
 
@@ -474,7 +531,6 @@
         });
 
         document.getElementById('add-address-btn').addEventListener('click', function() {
-            console.log("Botão 'Adicionar Endereço' clicado. Resetando o modal.");
 
             document.getElementById('modal-title').textContent = 'Adicionar Novo Endereço';
             document.getElementById('address-form').reset();

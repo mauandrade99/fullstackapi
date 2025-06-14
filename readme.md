@@ -34,7 +34,7 @@ Este projeto é uma aplicação Fullstack completa desenvolvida em Java com Spri
 
 Uma versão de demonstração da aplicação está disponível online. Você pode acessá-la e testar as funcionalidades diretamente no navegador.
 
-- **URL de Acesso:** **[http://vpsw2882.publiccloud.com.br:8080/login](http://vpsw2882.publiccloud.com.br:8080/login)**
+- **URL de Acesso:** **[https://vpsw2882.publiccloud.com.br/fullstack/login](https://vpsw2882.publiccloud.com.br/fullstack/login)**
 - **Usuário Administrador:**
   - **Email:** `admin@admin`
   - **Senha:** `123456`
