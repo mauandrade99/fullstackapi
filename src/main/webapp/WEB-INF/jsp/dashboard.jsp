@@ -23,8 +23,6 @@
 
 <main class="container mt-4">
     <div id="welcome-message"></div>
-    <hr>
-    
     <div class="row g-4">
         <div class="col-12 col-lg-5" id="admin-section">
             <div class="card h-100">
@@ -57,10 +55,10 @@
         <div class="col-12 col-lg-7" id="address-column">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0"><i class="fas fa-map-marker-alt"></i> Endereços</h3>
-                    <button class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#address-modal" id="add-address-btn">
-                        <i class="fas fa-plus"></i> 
-                    </button>
+                        <h3 class="mb-0"><i class="fas fa-map-marker-alt"></i> Endereços</h3>
+                        <button class="btn btn-primary d-none" data-bs-toggle="modal" style="max-width: 40px;" data-bs-target="#address-modal" id="add-address-btn">
+                            <i class="fas fa-plus"></i> 
+                        </button>
                 </div>
                 <div class="card-body" id="addresses-section">
                     <div id="addresses-user-info"></div>

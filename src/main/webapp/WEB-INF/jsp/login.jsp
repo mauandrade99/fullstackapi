@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
-<body class="bg-light">
+<body>
 
 <div class="full-height-container">
     <div class="col-10 col-sm-10 col-md-10 col-lg-6 col-xl-4">
         <div class="card shadow-sm border-0 login-card-custom">
-            <div class="card-body p-4 p-md-5">
+            <div class="card-body p-4">
                 <h3 class="card-title text-center mb-4">Login</h3>
                 <form id="login-form" action="${pageContext.request.contextPath}/api/auth/authenticate" method="post">
                     <div class="mb-3">

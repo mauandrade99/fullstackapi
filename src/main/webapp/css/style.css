@@ -3,6 +3,7 @@ html, body {
     height: 100%;
     margin: 0px;
     padding: 0px;
+    background-color: #dddddd;
 }
 
 /* Esta classe será o nosso contêiner principal para centralização */
@@ -82,4 +83,5 @@ html, body {
     font-size: 1.75rem;
     font-weight: 500;  
     margin-bottom: 2rem !important; 
+    max-height: 80%;
 }

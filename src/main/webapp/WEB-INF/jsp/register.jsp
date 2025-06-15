@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<body class="bg-light">
+<body>
 
 <div class="full-height-container">
     <div class="col-12 col-sm-10 col-md-12 col-lg-6 col-xl-4">
         <div class="card shadow-sm border-0 login-card-custom">
-            <div class="card-body p-4 p-md-5">
+            <div class="card-body p-4">
                 <h3 class="card-title text-center mb-4">Criar Conta</h3>
                 <form id="register-form" action="${pageContext.request.contextPath}/api/auth/register" method="post">
                     <div class="mb-3">
